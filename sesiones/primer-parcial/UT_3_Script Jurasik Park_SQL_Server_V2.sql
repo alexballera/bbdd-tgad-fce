@@ -1,10 +1,10 @@
 -- Base de datos : `Jurasik_Park`
---CREATE database Jurasik_Park;
+-- CREATE database Jurasik_Park;
+-- GO
 
 -- Selección de  la base de datos
-go
-use Jurasik_Park;
-go
+-- USE Jurasik_Park;
+-- GO
 -- estructura de tabla para la tabla `escuela`
 --
 CREATE TABLE escuela (
