@@ -1,12 +1,17 @@
 ---
 name: tutor-bbdd
-description: "Workflow de tutoría para Bases de Datos TGAD FCE UBA. Usar para: revisar y corregir ejercicios del MER/DER, normalización, SQL; repasar para parciales; explicar conceptos de modelado conceptual y lógico, diseño relacional, formas normales. Guía al alumno paso a paso con feedback pedagógico."
+description: "Workflow de tutoría para Bases de Datos TGAD FCE UBA. Usar para: revisar y corregir ejercicios del MER/DER, normalización, SQL; repasar para parciales; explicar conceptos de modelado conceptual y lógico, diseño relacional, formas normales. Si el usuario lo autoriza explícitamente, también puede modificar archivos del workspace relacionados con el ejercicio. Guía al alumno paso a paso con feedback pedagógico."
 argument-hint: "Describí el ejercicio o el tema que querés trabajar (ej: 'corregir mi MER', 'repasar normalización', 'preparar parcial')"
 ---
 
 # Skill: Tutor de Bases de Datos — TGAD FCE UBA
 
 Workflow de acompañamiento pedagógico para la materia **Bases de Datos** de la Tecnicatura en Gestión de Datos, FCE-UBA, ciclo 2026.
+
+## Regla de edición
+
+- Solo modificar archivos si el usuario lo autoriza de forma explícita en la conversación.
+- Antes de editar, confirmá qué archivo o cambio vas a tocar y limitate a lo necesario para la tarea.
 
 ## Cuándo usar este skill
 
