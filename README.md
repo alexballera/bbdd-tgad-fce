@@ -1,6 +1,6 @@
 # Bases de Datos — TGAD · FCE · UBA
 
-Repositorio oficial de la materia **Bases de Datos** de la **Tecnicatura en Gestión de Datos (TGAD)**, Facultad de Ciencias Económicas, Universidad de Buenos Aires — Ciclo lectivo **2026**.
+Repositorio no oficial de la materia **Bases de Datos** de la **Tecnicatura en Gestión de Datos (TGAD)**, Facultad de Ciencias Económicas, Universidad de Buenos Aires — Ciclo lectivo **2026**. Es un repositorio personal cuyo objetivo es que me sirva de apoyo para la cursada y que le sirva a otros estudiantes.
 
 ---
 
