@@ -113,6 +113,50 @@ El tutor no te da la respuesta directa: te guía para que llegues vos. Si te equ
 
 ---
 
+## Entorno de desarrollo (Python)
+
+Algunas sesiones incluyen scripts Python. Para ejecutarlos:
+
+### Requisitos
+
+- **Python** 3.12 recomendado
+- **pip-tools** para gestionar dependencias
+
+### Instalación del entorno
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate        # Windows CMD/PowerShell: .venv\Scripts\activate
+pip install pip-tools
+pip-compile
+pip install -r requirements.txt
+```
+
+**Explicación de cada paso:**
+
+1. `python -m venv .venv` — Crea un entorno virtual aislado en `.venv`
+2. `source .venv/Scripts/activate` — Activa el entorno
+3. `pip install pip-tools` — Instala la herramienta de gestión de dependencias
+4. `pip-compile` — Compila `requirements.in` a `requirements.txt` resolviendo todas las dependencias
+5. `pip install -r requirements.txt` — Instala todas las dependencias pinned
+
+### Gestión de dependencias con pip-tools
+
+- **`requirements.in`** — Dependencias directas del proyecto (fuente)
+- **`requirements.txt`** — Generado automáticamente con todas las dependencias y versiones pinned
+
+Para agregar una nueva dependencia:
+
+```bash
+echo "nombre_paquete" >> requirements.in
+python -m piptools compile
+pip install -r requirements.txt
+```
+
+⚠️ **NO editar manualmente `requirements.txt`** — siempre modificar `requirements.in` y recompilar.
+
+---
+
 ## Cómo usar este repositorio
 
 1. **Clonar** el repositorio en tu máquina local.
