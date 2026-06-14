@@ -222,23 +222,99 @@ CREATE TABLE escuela (
 
 ### 📐 Tipos de Datos Comunes
 
-| Tipo | Descripción | Ejemplo |
-|------|-------------|---------|
-| `INT` | Entero (-2,147,483,648 a 2,147,483,647) | `42` |
-| `SMALLINT` | Entero pequeño (-32,768 a 32,767) | `100` |
-| `TINYINT` | Entero muy pequeño (0 a 255) | `5` |
-| `BIGINT` | Entero grande | `9223372036854775807` |
-| `DECIMAL(p,s)` | Número decimal de precisión fija | `DECIMAL(8,2)` → 999999.99 |
-| `NUMERIC(p,s)` | Equivalente a DECIMAL | `NUMERIC(10,2)` |
-| `VARCHAR(n)` | Cadena variable hasta n caracteres | `VARCHAR(100)` |
-| `CHAR(n)` | Cadena fija de n caracteres | `CHAR(10)` |
-| `TEXT` | Texto largo (deprecado, usar VARCHAR(MAX)) | - |
-| `DATE` | Fecha (YYYY-MM-DD) | `'2026-06-12'` |
-| `SMALLDATETIME` | Fecha y hora (minutos) | `'2026-06-12 14:30:00'` |
-| `DATETIME` | Fecha y hora completa | `'2026-06-12 14:30:15.123'` |
-| `BIT` | Booleano (0 o 1) | `1` |
+**Enteros:**
+
+| Tipo | Rango | Bytes | Uso típico |
+|------|-------|:-----:|------------|
+| `TINYINT` | 0 a 255 | 1 | Códigos pequeños, flags numéricos |
+| `SMALLINT` | −32,768 a 32,767 | 2 | Códigos de tabla, números de grado |
+| `INT` | −2,147,483,648 a 2,147,483,647 | 4 | Claves primarias, contadores |
+| `BIGINT` | −9.2×10¹⁸ a 9.2×10¹⁸ | 8 | IDs de alto volumen |
+
+**Decimales:**
+
+| Tipo | Descripción | Uso típico |
+|------|-------------|------------|
+| `DECIMAL(p,s)` | Precisión exacta: `p` dígitos totales, `s` decimales | Aranceles, precios: `DECIMAL(8,2)` |
+| `NUMERIC(p,s)` | Sinónimo de `DECIMAL` en SQL Server | Ídem |
+| `FLOAT(n)` | Punto flotante aproximado (IEEE 754) | Cálculos científicos |
+| `REAL` | Equivale a `FLOAT(24)`, menos precisión | Valores aproximados simples |
+| `MONEY` | Monetario con 4 decimales (±922 billones) | Valores monetarios grandes |
+| `SMALLMONEY` | Monetario con 4 decimales (±214,748) | Importes pequeños |
+
+**Cadenas de caracteres:**
+
+| Tipo | Descripción | Cuándo usar |
+|------|-------------|-------------|
+| `CHAR(n)` | Fija de `n` caracteres (rellena con espacios) | Códigos de longitud fija (DNI, códigos postales) |
+| `VARCHAR(n)` | Variable hasta `n` caracteres | Nombres, descripciones |
+| `VARCHAR(MAX)` | Variable hasta ~2 GB | Textos muy largos |
+| `NVARCHAR(n)` | Variable Unicode (2 bytes/carácter) | Nombres con caracteres especiales |
+| `TEXT` | ⚠️ Deprecado — usar `VARCHAR(MAX)` | — |
+
+**Fechas y horas:**
+
+| Tipo | Rango / Precisión | Uso típico |
+|------|-------------------|------------|
+| `DATE` | YYYY-MM-DD (0001–9999) | Solo fecha sin hora |
+| `TIME` | HH:MM:SS.fffffff | Solo hora |
+| `SMALLDATETIME` | 1900–2079, precisión minuto | Fecha y hora, rango acotado |
+| `DATETIME` | 1753–9999, precisión 3 ms | Fecha y hora general |
+| `DATETIME2` | Mayor rango y precisión que DATETIME | Sistemas nuevos (preferido) |
+
+**Otros:**
+
+| Tipo | Descripción | Uso típico |
+|------|-------------|------------|
+| `BIT` | 0 o 1 (booleano) | Flags: activo/inactivo |
+| `UNIQUEIDENTIFIER` | GUID de 16 bytes | Claves primarias distribuidas |
+
+---
+
+### 📝 Opciones al definir una columna
+
+Cada columna en un `CREATE TABLE` puede incluir los siguientes elementos (en este orden):
+
+| Elemento | Obligatorio | Descripción | Ejemplo |
+|----------|:-----------:|-------------|---------|
+| Nombre | ✅ | Identificador único dentro de la tabla | `Codigo_escuela` |
+| Tipo de dato | ✅ | Define qué valores puede almacenar | `SMALLINT`, `VARCHAR(100)` |
+| `NULL` / `NOT NULL` | No (defecto: `NULL`) | Si la columna acepta valores nulos | `NOT NULL` |
+| `DEFAULT valor` | No | Valor automático cuando no se especifica al insertar | `DEFAULT 1`, `DEFAULT GETDATE()` |
+| `IDENTITY(inicio,paso)` | No | Autoincremento gestionado por SQL Server | `IDENTITY(1,1)` |
+| `CONSTRAINT nombre tipo` | No | Restricción nombrada en la misma línea (FK, UNIQUE) | `CONSTRAINT FK_esc REFERENCES escuela` |
+
+**Ejemplo con varias opciones combinadas:**
+```sql
+CREATE TABLE ejemplo (
+    Id         INT           NOT NULL IDENTITY(1,1),   -- autoincremento
+    Nombre     VARCHAR(100)  NOT NULL,                  -- obligatorio
+    Activo     BIT           NOT NULL DEFAULT 1,        -- por defecto activo
+    Fecha      DATE          NULL,                      -- opcional
+    EscuelaCod SMALLINT      NOT NULL
+        CONSTRAINT FK_ej_escuela REFERENCES escuela(Codigo_escuela),
+    PRIMARY KEY (Id)
+);
+```
 
 ### 🔑 Restricciones (CONSTRAINTS)
+
+**Resumen de todas las restricciones disponibles:**
+
+| Restricción | Propósito | Permite NULL | Observación |
+|-------------|-----------|:------------:|-------------|
+| `PRIMARY KEY` | Identifica unívocamente cada fila | ❌ | Por defecto crea un índice **CLUSTERED** |
+| `PRIMARY KEY NONCLUSTERED` | Igual, pero el índice es separado del almacenamiento físico | ❌ | Ver nota abajo |
+| `FOREIGN KEY ... REFERENCES` | Garantiza integridad referencial entre tablas | ✅ (salvo NOT NULL) | El valor debe existir en la tabla referenciada |
+| `UNIQUE` | No permite valores duplicados en la columna | ✅ Solo un NULL | Crea un índice único automáticamente |
+| `CHECK (condición)` | Valida que los datos cumplan una condición lógica | — | Ej: `CHECK (Arancel >= 0)` |
+| `DEFAULT valor` | Asigna un valor automático si no se especifica | — | Ej: `DEFAULT GETDATE()`, `DEFAULT 1` |
+| `NOT NULL` | La columna no puede quedar vacía | ❌ | No es una restricción formal, es parte del tipo |
+
+> **CLUSTERED vs NONCLUSTERED:**  
+> En SQL Server, un índice **CLUSTERED** determina el **orden físico** de las filas en el disco — la tabla _es_ el índice. Solo puede haber uno por tabla.  
+> Un índice **NONCLUSTERED** es una estructura separada que apunta a las filas pero no modifica su orden físico. Se usa cuando la PK no es la columna por la que más se busca en rangos.  
+> El script del profesor usa `PRIMARY KEY NONCLUSTERED` en varias tablas, lo que significa que la PK identifica las filas pero el almacenamiento físico queda libre para otro índice CLUSTERED (o sin ordenamiento explícito).
 
 **PRIMARY KEY:**
 ```sql

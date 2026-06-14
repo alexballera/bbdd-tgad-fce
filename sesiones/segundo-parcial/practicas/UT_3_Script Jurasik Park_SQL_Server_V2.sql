@@ -768,7 +768,85 @@ INSERT INTO reserva_por_grado VALUES (80, 10, 7);
 alter TABLE [dbo].[reserva_por_grado]  WITH check add  CONSTRAINT [FK_reserva_por_grado_reserva_tipo_visita] foreign KEY([Numero_Reserva], [Codigo_Tipo_Visita])
 REFERENCES [dbo].[reserva_tipo_visita] ([Numero_Reserva], [Codigo_Tipo_Visita])
 
------------------------------------------
 --Hacer que no puedan haber dos escuelas con el mismo nombre.
 ALTER TABLE escuela
-ADD CONSTRAINT UQ_nombre_escuela UNIQUE ()
+ADD CONSTRAINT UQ_nombre_escuela UNIQUE (Nombre_escuela);
+GO
+--------------------------------------------------------------
+-- CLASE 1 - Adicionales
+-- 1. Crear la tabla Distrito_Escolar con su correspondiente CP.
+USE Jurasik_Park;
+GO
+CREATE TABLE distrito_escolar (
+  codigo_distrito_escolar INT PRIMARY KEY,
+  nombre_distrito_escolar VARCHAR(255) NOT NULL,
+  direccion_distrito_escolar VARCHAR(255) NOT NULL
+)
+GO
+-- 2. Agregar clave foránea codigo_distrito_escolar a la tabla Escuela
+ALTER TABLE escuela
+ADD codigo_distrito_escolar INT,
+CONSTRAINT FK_codigo_distrito_escolar FOREIGN KEY (codigo_distrito_escolar) REFERENCES distrito_escolar(codigo_distrito_escolar);
+GO
+--- Se me olvidó agregar NOT NULL a la columna codigo_distrito_escolar, así que lo hago ahora:
+-- 1. Insertar el padre (necesario por la FK)
+INSERT INTO distrito_escolar VALUES (1, 'Distrito 1', 'Sin dirección asignada');
+GO
+
+-- 2. Eliminar los NULL (necesario para poder poner NOT NULL)
+UPDATE escuela
+SET codigo_distrito_escolar = 1
+WHERE codigo_distrito_escolar IS NULL;
+GO
+
+-- 3. Recién ahora se puede aplicar NOT NULL
+ALTER TABLE escuela
+ALTER COLUMN codigo_distrito_escolar INT NOT NULL;
+GO
+-- 3. Eliminar la columna de domicilios de la tabla Escuela.
+ALTER TABLE escuela
+DROP COLUMN Domicilio_escuela;
+GO
+-- 4. Agregar columnas calle_escuela y altura_escuela a la tabla Escuela.
+ALTER TABLE escuela
+ADD calle_escuela VARCHAR(255) NOT NULL DEFAULT 'Sin calle asignada',
+altura_escuela INT NOT NULL DEFAULT 0;
+GO
+-- 5. Agregar domicilio_guia en tabla Guia.
+ALTER TABLE guia
+ADD domicilio_guia VARCHAR(255) NOT NULL DEFAULT 'Sin domicilio asignado';
+GO
+-- 6. Eliminar tabla Telefono_Escuela
+DROP TABLE IF EXISTS Telefono_Escuela;
+GO
+-- 7. Agregar tabla Email_Escuela (sin Clave primaria)
+CREATE TABLE EMAIL_ESCUELA(
+  codigo_email_escuela INT NOT NULL,
+  email_escuela VARCHAR(255) NOT NULL,
+  codigo_escuela SMALLINT NOT NULL,
+  CONSTRAINT FK_codigo_escuela_email FOREIGN KEY (codigo_escuela) REFERENCES escuela(Codigo_escuela)
+)
+
+EXEC sp_rename 'EMAIL_ESCUELA', 'email_escuela';
+GO
+-- 8. Establecer clave primaria para Email_Escuela
+ALTER TABLE email_escuela
+ADD CONSTRAINT PK_email_escuela PRIMARY KEY (codigo_email_escuela);
+GO
+-- 9. Establecer que los nombres y apellidos de los guias no tengan valores nulos.
+ALTER TABLE guia
+ALTER COLUMN Nombre_guia VARCHAR(255) NOT NULL;
+GO
+ALTER TABLE guia
+ALTER COLUMN apellido_Guia VARCHAR(255) NOT NULL;
+GO
+-- 10. Establecer que no se repita la calle y la altura de las escuelas.
+UPDATE escuela
+SET calle_escuela = 'Calle ' + CAST(Codigo_escuela AS VARCHAR(10)),
+    altura_escuela = Codigo_escuela * 100;
+GO
+
+ALTER TABLE escuela
+ADD CONSTRAINT UQ_calle_altura UNIQUE (calle_escuela, altura_escuela);
+GO
+-------------------------------------------------------------
