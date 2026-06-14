@@ -9,9 +9,10 @@
 --
 CREATE TABLE escuela (
   Codigo_escuela smallint NOT NULL,
-  Nombre_escuela varchar(100) NOT NULL ,
+  Nombre_escuela varchar(100) NOT NULL,
   Domicilio_escuela varchar(200) NOT NULL ,
-  PRIMARY KEY NONCLUSTERED  (Codigo_escuela) );
+  PRIMARY KEY NONCLUSTERED  (Codigo_escuela))
+);
 --
 -- Volcar la base de datos para la tabla `escuela`
 --
@@ -766,3 +767,8 @@ INSERT INTO reserva_por_grado VALUES (80, 10, 7);
 
 alter TABLE [dbo].[reserva_por_grado]  WITH check add  CONSTRAINT [FK_reserva_por_grado_reserva_tipo_visita] foreign KEY([Numero_Reserva], [Codigo_Tipo_Visita])
 REFERENCES [dbo].[reserva_tipo_visita] ([Numero_Reserva], [Codigo_Tipo_Visita])
+
+-----------------------------------------
+--Hacer que no puedan haber dos escuelas con el mismo nombre.
+ALTER TABLE escuela
+ADD CONSTRAINT UQ_nombre_escuela UNIQUE ()
