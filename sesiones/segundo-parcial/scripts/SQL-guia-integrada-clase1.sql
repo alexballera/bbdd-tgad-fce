@@ -1,4 +1,7 @@
+-- ===================================================================
 -- EJERCICIOS CLASE 1
+-- ===================================================================
+
 --1. Crear una base de datos de nombre Jurassic_Park sin especificar los valores de la base.
 CREATE DATABASE Jurassic_Park_Practica;
 GO
@@ -78,4 +81,60 @@ ALTER TABLE Guia
 ADD sueldo_hora money NOT NULL;
 GO
 -- ===================================================================
--- EJERCICIOS CLASE 2
+-- CLASE 1 - Adicionales
+-- ===================================================================
+-- 1. Crear la tabla Distrito_Escolar con su correspondiente CP.
+CREATE TABLE Distrito_Escolar (
+    codigo_distrito_escolar smallint PRIMARY KEY NONCLUSTERED,
+    nombre_distrito_escolar varchar(50) NOT NULL
+);
+GO
+
+-- 2. Agregar clave foránea codigo_distrito_escolar a la tabla Escuela
+ALTER TABLE Escuela
+ADD codigo_distrito_escolar smallint,
+    CONSTRAINT FK_codigo_distrito_escolar FOREIGN KEY (codigo_distrito_escolar) REFERENCES Distrito_Escolar(codigo_distrito_escolar);
+GO
+
+-- 3. Eliminar la columna de domicilios de la tabla Escuela.
+ALTER TABLE Escuela
+DROP COLUMN direccion_escuela;
+GO
+-- 4. Agregar columnas calle_escuela y altura_escuela a la tabla Escuela.
+ALTER TABLE Escuela
+ADD calle_escuela varchar (50) NOT NULL,
+    altura_escuela smallint NOT NULL;
+GO
+
+-- 5. Agregar domicilio_guia en tabla Guia.
+ALTER TABLE Guia
+ADD domicilio_guia varchar (255) NOT NULL;
+GO
+
+-- 6. Eliminar tabla Telefono_Escuela
+DROP TABLE Telefono_Escuela;
+GO
+-- 7. Agregar tabla Email_Escuela (sin Clave primaria)
+CREATE TABLE Email_Escuela (
+    email_escuela varchar(50) NOT NULL,
+    codigo_escuela smallint NOT NULL,
+    CONSTRAINT FK_codigo_escuela2 FOREIGN KEY (codigo_escuela) REFERENCES Escuela(codigo_escuela)
+);
+GO
+-- 8. Establecer clave primaria para Email_Escuela
+ALTER TABLE Email_Escuela
+ADD PRIMARY KEY (email_escuela, codigo_escuela);
+GO
+-- 9. Establecer que los nombres y apellidos de los guias no tengan valores nulos. nulos.
+ALTER TABLE Guia
+ALTER COLUMN nombre_guia varchar(50) NOT NULL;
+GO
+
+ALTER TABLE Guia
+ALTER COLUMN apellido_guia varchar(50) NOT NULL;
+GO
+
+-- 10. Establecer que no se repita la calle y la altura de las escuelas.
+ALTER TABLE Escuela
+ADD CONSTRAINT UQ_calle_altura UNIQUE (calle_escuela, altura_escuela);
+GO
