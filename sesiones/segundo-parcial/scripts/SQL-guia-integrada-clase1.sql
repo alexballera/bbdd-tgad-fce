@@ -3,8 +3,8 @@
 -- ===================================================================
 
 --1. Crear una base de datos de nombre Jurassic_Park sin especificar los valores de la base.
-CREATE DATABASE Jurassic_Park_Practica;
-GO
+-- CREATE DATABASE Jurassic_Park_Practica;
+-- GO
 
 USE Jurassic_Park_Practica;
 GO
