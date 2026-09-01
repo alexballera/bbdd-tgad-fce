@@ -38,12 +38,20 @@
 - **temas de interés**
 
 
-### Aplico FN 1, busco multivalorados y creo una nueva entidad con la PK de la entidad que se desprende. p.e
-### **persona**
+### Identificamos las entidades aplicando la FN 1, busco multivalorados y creo una nueva entidad con la PK de la entidad que se desprende.
+### **Persona**
 -  *teléfono*
 -  *tema de interés*: al ser una entidad identificada previamente, también se crea una tabla pivote con persona
 
-### **evento**
+### **Evento**
 - *evento_fecha*
 - *evento_temas*
 
+## 4.- Identificamos las entidades según la sucesión de hechos
+### **Persona**
+- *invitacion*
+- *inscripción*, se puede inscribir o no. Entonces esta entidad es de G/E, es de especialización con invitaciones (es un subconjunto de aquel). Debe poseer los siguientes atributos: cod_persona, cod_evento, fecha_inscripción. Debe poser la PK de la entidad padre y conforma una única FK. Se establece la cardinalidad, en este caso 0 1, ya que puedo o no inscribirse.
+- *asistencia*
+- *diplomas*
+
+### **Evento**
